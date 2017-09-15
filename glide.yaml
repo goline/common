@@ -1,3 +1,4 @@
-package: github.com/goline/common
+package: github.com/goline/utils
 import:
-- package: gopkg.in/yaml.v2
+- package: github.com/go-ini/ini
+  version: ^1.28.2

@@ -1,6 +1,6 @@
-hash: 68ba7cec4dbe9553632685d3aec4389cbdc731251f3e8a3aea8e2e760053c983
-updated: 2017-09-13T19:19:48.500941983+07:00
+hash: 0ae500c284aab861df6621bddc72572ced05eed2fdf640c34457e6ce0410ac89
+updated: 2017-09-15T17:40:15.021636552+07:00
 imports:
-- name: gopkg.in/yaml.v2
-  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+- name: github.com/go-ini/ini
+  version: 20b96f641a5ea98f2f8619ff4f3e061cff4833bd
 testImports: []
