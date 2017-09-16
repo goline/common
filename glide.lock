@@ -1,6 +1,8 @@
-hash: 0ae500c284aab861df6621bddc72572ced05eed2fdf640c34457e6ce0410ac89
-updated: 2017-09-15T17:40:15.021636552+07:00
+hash: bb331484d907dee255496da46566f4a12ad980feb8e9b333ff56dcb4ebb85faf
+updated: 2017-09-16T09:07:34.951462482+07:00
 imports:
 - name: github.com/go-ini/ini
   version: 20b96f641a5ea98f2f8619ff4f3e061cff4833bd
+- name: github.com/mailru/easyjson
+  version: 2a92e673c9a6302dd05c3a691ae1f24aef46457d
 testImports: []
