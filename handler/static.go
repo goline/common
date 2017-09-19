@@ -7,7 +7,8 @@ import (
 )
 
 type StaticHandler struct {
-	File string
+	File        string
+	ContentType string
 }
 
 func (h *StaticHandler) Handle(c lapi.Connection) (interface{}, error) {
@@ -16,9 +17,14 @@ func (h *StaticHandler) Handle(c lapi.Connection) (interface{}, error) {
 		return nil, err
 	}
 
+	contentType := h.ContentType
+	if contentType == "" {
+		contentType = "text/plain"
+	}
+
 	c.Response().
 		WithContentType("").
 		WithContentBytes(data, nil).
-		WithContentType("text/plain")
+		WithContentType(contentType)
 	return nil, c.Response().Send()
 }
