@@ -1,8 +1,9 @@
 package handler
 
 import (
-	"github.com/goline/lapi"
 	"io/ioutil"
+
+	"github.com/goline/lapi"
 )
 
 type StaticHandler struct {
@@ -14,7 +15,10 @@ func (h *StaticHandler) Handle(c lapi.Connection) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.Response().WithContentType("").WithContentBytes(data, nil)
-	c.Response().Send()
-	return nil, nil
+
+	c.Response().
+		WithContentType("").
+		WithContentBytes(data, nil).
+		WithContentType("text/plain")
+	return nil, c.Response().Send()
 }

@@ -4,7 +4,7 @@ import (
 	j "github.com/mailru/easyjson"
 )
 
-type EasyJsonParser struct {}
+type EasyJsonParser struct{}
 
 func (p *EasyJsonParser) ContentType() string {
 	return "application/json"
