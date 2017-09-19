@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 
-func NewRescuer(logger lapi.Logger) lapi.Rescuer {
-	return &FactoryRescuer{logger}
+func NewRescuer() lapi.Rescuer {
+	return &FactoryRescuer{}
 }
 
 type ErrorResponse struct {
@@ -15,7 +15,7 @@ type ErrorResponse struct {
 }
 
 type FactoryRescuer struct {
-	logger lapi.Logger
+	Logger lapi.Logger `inject:"*"`
 }
 
 func (r *FactoryRescuer) Rescue(connection lapi.Connection, err error) error {
@@ -30,7 +30,7 @@ func (r *FactoryRescuer) Rescue(connection lapi.Connection, err error) error {
 	default:
 		r.handleUnknownError(connection, e)
 	}
-	r.logger.Error("%v", err)
+	r.Logger.Error("%v", err)
 
 	return nil
 }
