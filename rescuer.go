@@ -1,12 +1,12 @@
 package utils
 
 import (
-	"net/http"
 	"github.com/goline/lapi"
+	"net/http"
 )
 
-func NewRescuer() lapi.Rescuer {
-	return &FactoryRescuer{}
+func NewRescuer(logger lapi.Logger) lapi.Rescuer {
+	return &FactoryRescuer{logger}
 }
 
 type ErrorResponse struct {
@@ -14,25 +14,28 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
-type FactoryRescuer struct{}
+type FactoryRescuer struct {
+	logger lapi.Logger
+}
 
-func (h *FactoryRescuer) Rescue(connection lapi.Connection, err error) error {
+func (r *FactoryRescuer) Rescue(connection lapi.Connection, err error) error {
 	if connection == nil {
 		return err
 	}
 	switch e := err.(type) {
 	case lapi.SystemError:
-		h.handleSystemError(connection, e)
+		r.handleSystemError(connection, e)
 	case lapi.StackError:
-		h.handleStackError(connection, e)
+		r.handleStackError(connection, e)
 	default:
-		h.handleUnknownError(connection, e)
+		r.handleUnknownError(connection, e)
 	}
+	r.logger.Error("%v", err)
 
 	return nil
 }
 
-func (h *FactoryRescuer) handleSystemError(c lapi.Connection, err lapi.SystemError) {
+func (r *FactoryRescuer) handleSystemError(c lapi.Connection, err lapi.SystemError) {
 	switch err.Code() {
 	case lapi.ERROR_HTTP_NOT_FOUND:
 		c.Response().WithStatus(http.StatusNotFound).
@@ -46,11 +49,11 @@ func (h *FactoryRescuer) handleSystemError(c lapi.Connection, err lapi.SystemErr
 	}
 }
 
-func (h *FactoryRescuer) handleStackError(c lapi.Connection, err lapi.StackError) {
+func (r *FactoryRescuer) handleStackError(c lapi.Connection, err lapi.StackError) {
 	c.Response().WithStatus(err.Status()).WithContent(&ErrorResponse{"", err.Error()})
 }
 
-func (h *FactoryRescuer) handleUnknownError(c lapi.Connection, err error) {
+func (r *FactoryRescuer) handleUnknownError(c lapi.Connection, err error) {
 	if e, ok := err.(lapi.ErrorStatus); ok == true {
 		c.Response().WithStatus(e.Status())
 	} else {

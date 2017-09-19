@@ -3,3 +3,4 @@ import:
 - package: github.com/go-ini/ini
   version: ^1.28.2
 - package: github.com/mailru/easyjson
+- package: github.com/goline/lapi
