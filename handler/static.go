@@ -26,5 +26,5 @@ func (h *StaticHandler) Handle(c lapi.Connection) (interface{}, error) {
 		WithContentType("").
 		WithContentBytes(data, nil).
 		WithContentType(contentType)
-	return nil, c.Response().Send()
+	return nil, nil
 }
