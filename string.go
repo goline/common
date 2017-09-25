@@ -1,4 +1,4 @@
-package utils
+package tools
 
 import (
 	"math/rand"
@@ -26,6 +26,7 @@ func int63(src rand.Source) int64 {
 	return v
 }
 
+// Random randomizes a string with specific length
 func Random(n int) string {
 	src := rand.NewSource(time.Now().UnixNano())
 	b := make([]byte, n)

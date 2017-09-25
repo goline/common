@@ -1,14 +1,14 @@
-hash: 7aed35da21d9a37f458c8250109a276796219ffa95d28f8db7de3d7a2b880534
-updated: 2017-09-19T17:55:39.181148655+07:00
+hash: 378133c3ab6e3e3064c50433dd9cbfdcae0760459d79847378e8564ed02a08ff
+updated: 2017-09-25T21:17:39.537841614+07:00
 imports:
 - name: github.com/go-ini/ini
   version: 20b96f641a5ea98f2f8619ff4f3e061cff4833bd
-- name: github.com/goline/lapi
-  version: 61d08333b950ba1e1b4c2eacb9bafb8af080d6fa
-- name: github.com/mailru/easyjson
-  version: 2a92e673c9a6302dd05c3a691ae1f24aef46457d
-  subpackages:
-  - buffer
-  - jlexer
-  - jwriter
+- name: github.com/goline/errors
+  version: b2371c4c8b19799de259df6fde97621d1b42a059
+- name: github.com/onsi/ginkgo
+  version: 9eda700730cba42af70d53180f9dcce9266bc2bc
+- name: github.com/onsi/gomega
+  version: c893efa28eb45626cdaa76c9f653b62488858837
+- name: github.com/pkg/errors
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
 testImports: []

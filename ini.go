@@ -1,41 +1,37 @@
-package utils
+package tools
 
 import (
-	"errors"
 	"fmt"
 	"reflect"
 
 	"github.com/go-ini/ini"
+	"github.com/goline/errors"
 )
 
-type IniLoader interface {
-	Load(file string, v interface{}) error
+func LoadIni(file string, v interface{}) error {
+	return new(iniLoader).Load(file, v)
 }
 
-func NewIniLoader() IniLoader {
-	return &FactoryIniLoader{}
-}
-
-type FactoryIniLoader struct {
+type iniLoader struct {
 	ini *ini.File
 }
 
-func (l *FactoryIniLoader) Load(file string, v interface{}) error {
+func (l *iniLoader) Load(file string, v interface{}) error {
 	var err error
 	l.ini, err = ini.InsensitiveLoad(file)
 	if err != nil {
-		return err
+		return errors.New(ERR_TOOLS_LOAD_INI_FAILED, fmt.Sprintf("Failed to load INI. Got %s", err.Error()))
 	}
 
 	return l.inject(v)
 }
 
-func (l *FactoryIniLoader) inject(v interface{}) error {
+func (l *iniLoader) inject(v interface{}) error {
 	t := reflect.TypeOf(v)
 	switch t.Kind() {
 	case reflect.Ptr:
 	default:
-		return errors.New(fmt.Sprintf("Ini load failed. Could not load data to %v", t.Kind()))
+		return errors.New(ERR_TOOLS_LOAD_INI_INVALID_ARGUMENT, fmt.Sprintf("Could not load data to %v", t.Kind()))
 	}
 
 	s := t.Elem()
