@@ -14,6 +14,13 @@ type iniInputTest struct {
 	RedisHost  string `ini:"host" ini_section:"redis"`
 	RedisPort  int64  `ini:"port" ini_section:"redis"`
 	RedisDelay int64  `ini:"delay" ini_section:"redis"`
+
+	System iniSubInputTest
+}
+
+type iniSubInputTest struct {
+	Env       string `ini:"env"`
+	EnableLog bool   `ini:"enable_log"`
 }
 
 var _ = Describe("IniLoader", func() {
@@ -38,5 +45,7 @@ var _ = Describe("IniLoader", func() {
 		Expect(input.RedisHost).To(Equal("127.0.0.1"))
 		Expect(input.RedisPort).To(Equal(int64(6379)))
 		Expect(input.RedisDelay).To(Equal(int64(-1)))
+		Expect(input.System.Env).To(Equal("test"))
+		Expect(input.System.EnableLog).To(BeTrue())
 	})
 })

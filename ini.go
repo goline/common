@@ -26,38 +26,49 @@ func (l *iniLoader) Load(file string, v interface{}) error {
 	return l.inject(v)
 }
 
-func (l *iniLoader) inject(v interface{}) error {
-	t := reflect.TypeOf(v)
+func (l *iniLoader) inject(input interface{}) error {
+	t := reflect.TypeOf(input)
+	v := reflect.ValueOf(input)
 	switch t.Kind() {
+	case reflect.Struct:
 	case reflect.Ptr:
+		t = t.Elem()
+		v = v.Elem()
 	default:
 		return errors.New(ERR_TOOLS_LOAD_INI_INVALID_ARGUMENT, fmt.Sprintf("Could not load data to %v", t.Kind()))
 	}
 
-	s := t.Elem()
-	n := s.NumField()
+	l.injectTV(t, v)
+	return nil
+}
+
+func (l *iniLoader) injectTV(t reflect.Type, v reflect.Value) {
+	n := t.NumField()
 	if n == 0 {
-		return nil
+		return
 	}
 
 	var section, key string
 	var ok bool
-	vv := reflect.ValueOf(v).Elem()
 	for i := 0; i < n; i++ {
-		sf := s.Field(i)
+		tf := t.Field(i)
+		vf := v.Field(i)
+		if vf.CanInterface() && (vf.Kind() == reflect.Struct || vf.Kind() == reflect.Ptr) {
+			l.injectTV(vf.Type(), vf)
+			continue
+		}
 
-		key, ok = sf.Tag.Lookup("ini")
+		key, ok = tf.Tag.Lookup("ini")
 		if ok == false {
 			continue
 		}
 
 		section = ""
-		if st, ok := sf.Tag.Lookup("ini_section"); ok == true {
+		if st, ok := tf.Tag.Lookup("ini_section"); ok == true {
 			section = st
 		}
 
-		f := vv.Field(i)
-		if f.CanSet() == false {
+		if vf.CanSet() == false {
 			continue
 		}
 
@@ -71,26 +82,24 @@ func (l *iniLoader) inject(v interface{}) error {
 			continue
 		}
 
-		switch f.Kind() {
+		switch vf.Kind() {
 		case reflect.String:
-			f.SetString(value.String())
+			vf.SetString(value.String())
 		case reflect.Bool:
 			vb, err := value.Bool()
 			if err == nil {
-				f.SetBool(vb)
+				vf.SetBool(vb)
 			}
 		case reflect.Int64:
 			vi, err := value.Int64()
 			if err == nil {
-				f.SetInt(vi)
+				vf.SetInt(vi)
 			}
 		case reflect.Float64:
-			vf, err := value.Float64()
+			vfl, err := value.Float64()
 			if err == nil {
-				f.SetFloat(vf)
+				vf.SetFloat(vfl)
 			}
 		}
 	}
-
-	return nil
 }
