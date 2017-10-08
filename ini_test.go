@@ -16,6 +16,10 @@ type iniInputTest struct {
 	RedisDelay int64  `ini:"delay" ini_section:"redis"`
 
 	System iniSubInputTest
+
+	JWT struct{
+		Algorithm string `ini:"jwt_algorithm"`
+	}
 }
 
 type iniSubInputTest struct {
@@ -47,5 +51,6 @@ var _ = Describe("IniLoader", func() {
 		Expect(input.RedisDelay).To(Equal(int64(-1)))
 		Expect(input.System.Env).To(Equal("test"))
 		Expect(input.System.EnableLog).To(BeTrue())
+		Expect(input.JWT.Algorithm).To(Equal("hs256"))
 	})
 })
