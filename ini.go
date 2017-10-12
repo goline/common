@@ -79,7 +79,9 @@ func (l *IniReadWriter) injectField(sf reflect.StructField, v reflect.Value) err
 
 	value, err := section.GetKey(key)
 	if err != nil {
-		return nil
+		// load default value
+		value = section.Key(key)
+		value.SetValue(sf.Tag.Get("default"))
 	}
 
 	switch v.Kind() {

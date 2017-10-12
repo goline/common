@@ -14,7 +14,7 @@ type iniInputTest struct {
 
 	RedisHost  string `ini:"host" ini_section:"redis"`
 	RedisPort  int64  `ini:"port" ini_section:"redis"`
-	RedisDelay int64  `ini:"delay" ini_section:"redis"`
+	RedisDelay int64  `ini:"delay" ini_section:"redis" default:"-1"`
 
 	System iniSubInputTest `ini:"-"`
 
