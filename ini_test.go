@@ -5,6 +5,7 @@ import (
 	"github.com/goline/tools"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"io/ioutil"
 )
 
 type iniInputTest struct {
@@ -23,15 +24,15 @@ type iniInputTest struct {
 }
 
 type iniSubInputTest struct {
-	Env       string `ini:"env"`
+	Env       string `ini:"env" comment:"Available value are: prod, dev and test"`
 	EnableLog bool   `ini:"enable_log"`
 }
 
 var _ = Describe("IniLoader", func() {
-	It("LoadIni should return error code ERR_TOOLS_LOAD_INI_FAILED", func() {
+	It("LoadIni should return error code ERR_TOOLS_READ_INI_FAILED", func() {
 		err := tools.LoadIni(".", nil)
 		Expect(err).NotTo(BeNil())
-		Expect(err.(errors.Error).Code()).To(Equal(tools.ERR_TOOLS_LOAD_INI_FAILED))
+		Expect(err.(errors.Error).Code()).To(Equal(tools.ERR_TOOLS_READ_INI_FAILED))
 	})
 
 	It("LoadIni should load to input", func() {
@@ -46,5 +47,42 @@ var _ = Describe("IniLoader", func() {
 		Expect(input.System.Env).To(Equal("test"))
 		Expect(input.System.EnableLog).To(BeTrue())
 		Expect(input.JWT.Algorithm).To(Equal("hs256"))
+	})
+
+	It("SaveIni should save input to INI file", func() {
+		input := &iniInputTest{
+			DbHost:    "db",
+			DbPort:    3300,
+			RedisHost: "redis.io",
+			System: iniSubInputTest{
+				Env:       "dev",
+				EnableLog: false,
+			},
+			JWT: struct {
+				Algorithm string `ini:"jwt_algorithm"`
+			}{
+				Algorithm: "es256",
+			},
+		}
+
+		var err error
+		err = tools.SaveIni("./fixtures/output.ini", input)
+		Expect(err).To(BeNil())
+
+		b, err := ioutil.ReadFile("./fixtures/output.ini")
+		Expect(err).To(BeNil())
+		Expect(string(b)).To(Equal(`db_host       = db
+db_port       = 3300
+; Available value are: prod, dev and test
+env           = dev
+enable_log    = false
+jwt_algorithm = es256
+
+[redis]
+host  = redis.io
+port  = REDIS_PORT
+delay = REDIS_DELAY
+
+`))
 	})
 })
