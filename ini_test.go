@@ -17,7 +17,7 @@ type iniInputTest struct {
 
 	System iniSubInputTest
 
-	JWT struct{
+	JWT struct {
 		Algorithm string `ini:"jwt_algorithm"`
 	}
 }

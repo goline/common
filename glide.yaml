@@ -3,6 +3,7 @@ import:
 - package: github.com/go-ini/ini
   version: ^1.28.2
 - package: github.com/goline/errors
+testImport:
 - package: github.com/onsi/ginkgo
   version: ~1.4.0
 - package: github.com/onsi/gomega
