@@ -15,11 +15,11 @@ type iniInputTest struct {
 	RedisPort  int64  `ini:"port" ini_section:"redis"`
 	RedisDelay int64  `ini:"delay" ini_section:"redis"`
 
-	System iniSubInputTest
+	System iniSubInputTest `ini:"-"`
 
 	JWT struct {
 		Algorithm string `ini:"jwt_algorithm"`
-	}
+	} `ini:"-"`
 }
 
 type iniSubInputTest struct {
@@ -32,12 +32,6 @@ var _ = Describe("IniLoader", func() {
 		err := tools.LoadIni(".", nil)
 		Expect(err).NotTo(BeNil())
 		Expect(err.(errors.Error).Code()).To(Equal(tools.ERR_TOOLS_LOAD_INI_FAILED))
-	})
-
-	It("LoadIni should return error code ERR_TOOLS_LOAD_INI_INVALID_ARGUMENT", func() {
-		err := tools.LoadIni("./fixtures/test.ini", "string")
-		Expect(err).NotTo(BeNil())
-		Expect(err.(errors.Error).Code()).To(Equal(tools.ERR_TOOLS_LOAD_INI_INVALID_ARGUMENT))
 	})
 
 	It("LoadIni should load to input", func() {

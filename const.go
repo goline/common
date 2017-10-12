@@ -9,8 +9,8 @@ const (
 	// Last 3 digits for error code, it might be extended to
 	// whatever number if necessary
 
-	ERR_TOOLS_LOAD_INI_FAILED           = "0.151.001"
-	ERR_TOOLS_LOAD_INI_INVALID_ARGUMENT = "0.151.002"
+	ERR_TOOLS_LOAD_INI_FAILED          = "0.151.001"
+	ERR_TOOLS_LOAD_INI_INVALID_SECTION = "0.151.002"
 
 	ERR_TOOLS_STRUCT_READ_INVALID_TYPE = "0.152.001"
 )

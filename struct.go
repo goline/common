@@ -7,7 +7,7 @@ import (
 	"github.com/goline/errors"
 )
 
-type scanFn func(sf reflect.StructField, v reflect.Value)
+type scanFn func(sf reflect.StructField, v reflect.Value) errors.Error
 type StructReader struct{}
 
 // Read scans all fields inside target then apply each function
@@ -26,7 +26,9 @@ func (s *StructReader) Read(target interface{}, each scanFn) errors.Error {
 
 	n := v.NumField()
 	for i := 0; i < n; i++ {
-		each(t.Field(i), v.Field(i))
+		if err := each(t.Field(i), v.Field(i)); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -38,11 +40,15 @@ func (s *StructReader) ReadTag(target interface{}, each scanFn, tags ...string) 
 		return nil
 	}
 
-	return s.Read(target, func(sf reflect.StructField, v reflect.Value) {
+	return s.Read(target, func(sf reflect.StructField, v reflect.Value) errors.Error {
 		for _, tag := range tags {
 			if t, ok := sf.Tag.Lookup(tag); ok && t != "" {
-				each(sf, v)
+				if err := each(sf, v); err != nil {
+					return err
+				}
 			}
 		}
+
+		return nil
 	})
 }

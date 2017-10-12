@@ -26,80 +26,60 @@ func (l *iniLoader) Load(file string, v interface{}) error {
 	return l.inject(v)
 }
 
-func (l *iniLoader) inject(input interface{}) error {
-	t := reflect.TypeOf(input)
-	v := reflect.ValueOf(input)
-	switch t.Kind() {
-	case reflect.Struct:
-	case reflect.Ptr:
-		t = t.Elem()
-		v = v.Elem()
-	default:
-		return errors.New(ERR_TOOLS_LOAD_INI_INVALID_ARGUMENT, fmt.Sprintf("Could not load data to %v", t.Kind()))
-	}
-
-	l.injectTV(t, v)
-	return nil
+func (l *iniLoader) inject(input interface{}) errors.Error {
+	return new(StructReader).ReadTag(input, l.injectField, "ini", "ini_section")
 }
 
-func (l *iniLoader) injectTV(t reflect.Type, v reflect.Value) {
-	n := t.NumField()
-	if n == 0 {
-		return
-	}
-
-	var section, key string
-	var ok bool
-	for i := 0; i < n; i++ {
-		tf := t.Field(i)
-		vf := v.Field(i)
-		if vf.CanInterface() && (vf.Kind() == reflect.Struct || vf.Kind() == reflect.Ptr) {
-			l.injectTV(vf.Type(), vf)
-			continue
+func (l *iniLoader) injectField(sf reflect.StructField, v reflect.Value) errors.Error {
+	if v.CanInterface() && (v.Kind() == reflect.Struct || v.Kind() == reflect.Ptr) {
+		return new(StructReader).ReadTag(v.Interface(), func(tf reflect.StructField, vf reflect.Value) errors.Error {
+			return l.injectField(tf, v.FieldByName(tf.Name))
+		}, "ini", "ini_section")
+	} else {
+		if !v.CanSet() {
+			return nil
 		}
 
-		key, ok = tf.Tag.Lookup("ini")
-		if ok == false {
-			continue
+		sec := ""
+		if st := sf.Tag.Get("ini_section"); st != "" {
+			sec = st
 		}
 
-		section = ""
-		if st, ok := tf.Tag.Lookup("ini_section"); ok == true {
-			section = st
+		section := l.ini.Section(sec)
+		if section == nil {
+			return errors.New(ERR_TOOLS_LOAD_INI_INVALID_SECTION, fmt.Sprintf("Section %s could not be found", sec))
 		}
 
-		if vf.CanSet() == false {
-			continue
+		key := sf.Tag.Get("ini")
+		if key == "" {
+			return nil
 		}
 
-		sec := l.ini.Section(section)
-		if sec == nil {
-			continue
-		}
-
-		value, err := sec.GetKey(key)
+		value, err := section.GetKey(key)
 		if err != nil {
-			continue
+			return nil
 		}
 
-		switch vf.Kind() {
+		switch v.Kind() {
 		case reflect.String:
-			vf.SetString(value.String())
+			v.SetString(value.String())
 		case reflect.Bool:
 			vb, err := value.Bool()
 			if err == nil {
-				vf.SetBool(vb)
+				v.SetBool(vb)
 			}
 		case reflect.Int64:
 			vi, err := value.Int64()
 			if err == nil {
-				vf.SetInt(vi)
+				v.SetInt(vi)
 			}
 		case reflect.Float64:
 			vfl, err := value.Float64()
 			if err == nil {
-				vf.SetFloat(vfl)
+				v.SetFloat(vfl)
 			}
 		}
 	}
+
+	return nil
 }
