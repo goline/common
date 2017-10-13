@@ -55,7 +55,6 @@ var _ = Describe("IniLoader", func() {
 
 	It("SaveIni should save input to INI file", func() {
 		input := &iniInputTest{
-			DbHost:    "db",
 			DbPort:    3300,
 			RedisHost: "redis.io",
 			System: iniSubInputTest{
@@ -75,7 +74,7 @@ var _ = Describe("IniLoader", func() {
 
 		b, err := ioutil.ReadFile("./fixtures/output.ini")
 		Expect(err).To(BeNil())
-		Expect(string(b)).To(Equal(`db_host       = db
+		Expect(string(b)).To(Equal(`db_host       = %DB_HOST%
 db_port       = 3300
 ; Available value are: prod, dev and test
 env           = dev

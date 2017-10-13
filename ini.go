@@ -174,7 +174,7 @@ func (l *IniReadWriter) scanField(sf reflect.StructField, v reflect.Value) error
 		if sec != "" {
 			value = fmt.Sprintf("%s%s_%s%s", IniParamMarker, strings.ToUpper(sec), strings.ToUpper(key), IniParamMarker)
 		} else {
-			value = strings.ToUpper(key)
+			value = fmt.Sprintf("%s%s%s", IniParamMarker, strings.ToUpper(key), IniParamMarker)
 		}
 	}
 
