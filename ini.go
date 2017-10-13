@@ -113,6 +113,14 @@ func (l *IniReadWriter) scan(input interface{}) errors.Error {
 
 func (l *IniReadWriter) scanField(sf reflect.StructField, v reflect.Value) errors.Error {
 	if v.CanInterface() && (v.Kind() == reflect.Struct || v.Kind() == reflect.Ptr) {
+		sec := sf.Tag.Get("ini_section")
+		comment := sf.Tag.Get("comment")
+		if sec != "" && comment != "" {
+			if section := l.ini.Section(sec); section != nil {
+				section.Comment = comment
+			}
+		}
+
 		return new(StructReader).ReadTag(v.Interface(), func(tf reflect.StructField, vf reflect.Value) errors.Error {
 			return l.scanField(tf, v.FieldByName(tf.Name))
 		}, "ini", "ini_section")

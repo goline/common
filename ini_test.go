@@ -21,6 +21,10 @@ type iniInputTest struct {
 	JWT struct {
 		Algorithm string `ini:"jwt_algorithm"`
 	} `ini:"-"`
+
+	Other struct {
+		DevMode bool `ini:"dev_mode" ini_section:"other"`
+	} `ini:"-" ini_section:"other" comment:"Other stuffs come here"`
 }
 
 type iniSubInputTest struct {
@@ -82,6 +86,10 @@ jwt_algorithm = es256
 host  = redis.io
 port  = REDIS_PORT
 delay = REDIS_DELAY
+
+; Other stuffs come here
+[other]
+dev_mode = false
 
 `))
 	})
