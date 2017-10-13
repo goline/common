@@ -84,8 +84,8 @@ jwt_algorithm = es256
 
 [redis]
 host  = redis.io
-port  = REDIS_PORT
-delay = REDIS_DELAY
+port  = %REDIS_PORT%
+delay = %REDIS_DELAY%
 
 ; Other stuffs come here
 [other]

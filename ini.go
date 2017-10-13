@@ -10,6 +10,10 @@ import (
 	"strings"
 )
 
+var (
+	IniParamMarker = "%"
+)
+
 func LoadIni(file string, v interface{}) errors.Error {
 	return new(IniReadWriter).Read(file, v)
 }
@@ -168,7 +172,7 @@ func (l *IniReadWriter) scanField(sf reflect.StructField, v reflect.Value) error
 		// ignore when empty, zero
 		// TODO: please improve this
 		if sec != "" {
-			value = fmt.Sprintf("%s_%s", strings.ToUpper(sec), strings.ToUpper(key))
+			value = fmt.Sprintf("%s%s_%s%s", IniParamMarker, strings.ToUpper(sec), strings.ToUpper(key), IniParamMarker)
 		} else {
 			value = strings.ToUpper(key)
 		}
