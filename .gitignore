@@ -1,3 +1,4 @@
 vendor/
 .idea/
 fixtures/output.ini
+glide.lock
